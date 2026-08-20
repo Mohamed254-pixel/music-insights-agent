@@ -1,0 +1,29 @@
+# Private Apple Music data
+data/raw/
+data/processed/
+*.csv
+*.zip
+
+# Allow sanitized sample data
+!data/sample/*.csv
+
+# Passwords and environment variables
+.env
+.env.*
+!.env.example
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Databases
+*.db
+*.sqlite
+*.sqlite3
+
+# macOS and VS Code
+.DS_Store
+.vscode/
