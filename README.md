@@ -33,7 +33,7 @@ Natural-language answers
 ### Worked example: "Why did my listening change this month?"
 
 1. Agent identifies the two periods to compare (this month vs. last month).
-2. Agent runs a fixed set of parameterized SQL queries against pre-built analytics views — not freehand queries against raw tables.
+2. Agent calls approved query tools that execute parameterized SQL templates against pre-built analytics views.
 3. Metrics compared: total listening minutes, play count, unique artists, unique tracks, genre mix, device breakdown, time-of-day distribution, skip rate, and new-vs-repeated tracks.
 4. Agent computes deltas between periods and surfaces the top changes (ranked by magnitude, above a minimum threshold — not every metric that moved).
 5. Agent explains the changes in plain language, backed by the actual numbers.
@@ -78,8 +78,8 @@ Additional Apple Music exports may be used for artist, genre, library, and ranki
 
 ## Design Principles for the AI Agent
 
-* **Read-only access.** The agent connects through a database role with `SELECT`-only grants — not just a prompt instruction, but an enforced permission boundary.
-* **Predefined analytics views, not freehand SQL.** The agent selects from a fixed set of parameterized views (e.g. `monthly_summary(month)`) rather than writing arbitrary queries against raw tables. This keeps answers safe, testable, and reproducible.
+* **Read-only access.** The agent connects through a database role with SELECT-only grants—not just a prompt instruction, but an enforced permission boundary.
+* **PApproved query tools, not unrestricted SQL.** The agent can call a small set of tested tools backed by parameterized SQL templates and predefined analytics views. It cannot query raw tables directly.
 * **Numbers before narrative.** Every explanation is grounded in query results. No claim is made without a supporting figure.
 * **No causal overreach.** The agent reports data-observable changes only. It does not infer personal motivations or external causes it has no evidence for.
 
