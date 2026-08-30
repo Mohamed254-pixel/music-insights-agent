@@ -1,5 +1,7 @@
 numpy==2.5.2
 pandas==3.0.5
+psycopg[binary]>=3.2,<4
 pyarrow==25.0.1
 python-dateutil==2.9.0.post0
+python-dotenv>=1.0,<2
 six==1.17.0

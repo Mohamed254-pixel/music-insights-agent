@@ -1,0 +1,27 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: music-insights-postgres
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-music_insights}
+      POSTGRES_USER: ${POSTGRES_USER:-music_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-music_password}
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - music_insights_postgres_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - pg_isready -U ${POSTGRES_USER:-music_user} -d ${POSTGRES_DB:-music_insights}
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  music_insights_postgres_data:
