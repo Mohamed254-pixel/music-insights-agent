@@ -101,6 +101,9 @@ def clean_chunk(chunk):
         cleaned["event_end_timestamp_utc"]
         - cleaned["event_start_timestamp_utc"]
     ).dt.total_seconds() * 1000
+    # Match PostgreSQL's whole-millisecond storage without floating-point
+    # artifacts turning an exact 1001 ms duration into 1000 ms on load.
+    timestamp_duration = timestamp_duration.round().astype("Int64")
 
     cleaned["listening_duration_ms"] = timestamp_duration.where(
         timestamp_duration >= 0
@@ -161,7 +164,7 @@ def clean_chunk(chunk):
     )
 
     cleaned["is_natural_end"] = (
-        cleaned["end_reason"] == "NATURAL_END_OF_TRACK"
+        cleaned["end_reason"].eq("NATURAL_END_OF_TRACK").fillna(False)
     )
 
     cleaned["is_skipped"] = cleaned["end_reason"].isin(
@@ -172,8 +175,8 @@ def clean_chunk(chunk):
     )
 
     cleaned["is_listening_event"] = (
-        cleaned["end_reason"].ne("SCRUB_END")
-        & cleaned["listening_duration_ms"].gt(0)
+        cleaned["end_reason"].ne("SCRUB_END").fillna(False)
+        & cleaned["listening_duration_ms"].gt(0).fillna(False)
     )
 
     return cleaned

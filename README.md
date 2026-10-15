@@ -74,7 +74,7 @@ The loader uses this key to prevent duplicates and safely process newer Apple Mu
 
 ### Duration handling
 
-The pipeline uses the difference between the event start and end timestamps as the cleaned listening duration.
+The pipeline uses the difference between the event start and end timestamps as the cleaned listening duration, rounded to whole milliseconds to match database storage without floating-point truncation.
 
 Rows with missing or unusual durations remain in the main table for auditing. The analytics view caps durations that exceed the media duration instead of deleting the original record.
 
@@ -297,7 +297,50 @@ The agent can explain what changed in the data. It cannot claim to know why some
 - [x] Reusable analytics views
 - [ ] Power BI dashboard
 - [ ] Read-only AI analytics agent
-- [ ] Automated tests
+- [x] Automated unit and PostgreSQL integration tests
+
+## Verification and Tests
+
+The tests use Python's built-in `unittest`; no extra test packages are required.
+Run the cleaning and loader-validation tests after installing `requirements.txt`:
+
+```bash
+python -m unittest discover -s tests -t . -v
+```
+
+PostgreSQL tests are skipped unless `TEST_DATABASE_URL` is set. They create a
+uniquely named temporary database and delete it after the suite, so the supplied
+account needs `CREATEDB` permission. Existing databases and listening data are not
+modified. To run against a disposable PostgreSQL 17 container:
+
+```bash
+docker run --detach --rm --name music-insights-tests \
+  -e POSTGRES_PASSWORD=verification \
+  -p 127.0.0.1:55432:5432 postgres:17-alpine
+# Wait until this reports "accepting connections":
+docker exec music-insights-tests pg_isready -U postgres
+TEST_DATABASE_URL=postgresql://postgres:verification@127.0.0.1:55432/postgres \
+  python -m unittest discover -s tests -t . -v
+docker stop music-insights-tests
+```
+
+To also verify your private export, set `MUSIC_SOURCE_CSV` to its absolute path
+alongside `TEST_DATABASE_URL` when running the suite. This exercises CSV cleaning,
+Parquet validation, two database loads, quality reports, and SQL totals checked
+against Pandas. Its generated Parquet file and database are temporary; the source
+export is only read. Without this variable, the private-export test is skipped.
+
+Coverage includes:
+
+- PLAY_END filtering and duplicate removal within and across chunks
+- Missing/blank IDs, missing columns, and invalid event types
+- Timestamp durations, invalid durations, completion caps, and local timestamps
+- Scrub/skip classification and missing end reasons
+- Unchanged reruns, changed-row updates, audit counts, and transaction rollback
+- Analytics filtering, duration caps, and monthly/track/device aggregates
+
+Rows with missing end reasons remain available for auditing, with
+`is_natural_end` and `is_listening_event` set to false.
 
 ## Privacy
 

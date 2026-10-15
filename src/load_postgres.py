@@ -138,7 +138,10 @@ def read_and_validate_data():
     data = data.loc[:, list(DATABASE_COLUMNS)].copy()
 
     missing_event_ids = int(
-        data["event_id"].isna().sum()
+        (
+            data["event_id"].isna()
+            | data["event_id"].astype("string").str.strip().eq("")
+        ).sum()
     )
 
     duplicate_event_ids = int(
@@ -146,7 +149,7 @@ def read_and_validate_data():
     )
 
     invalid_event_types = int(
-        data["event_type"].ne("PLAY_END").sum()
+        data["event_type"].fillna("").ne("PLAY_END").sum()
     )
 
     print("Pre-load validation")
