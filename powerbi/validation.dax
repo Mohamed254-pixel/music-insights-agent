@@ -1,0 +1,10 @@
+EVALUATE
+ROW(
+    "Playback Events", [Listening Events],
+    "Listening Hours", [Listening Hours],
+    "Unique Tracks", [Unique Tracks],
+    "Skip Rate", [Skip Rate],
+    "Dated Events", [Dated Events],
+    "Undated Events", [Events Without Dates],
+    "Date Coverage", [Date Coverage]
+)

@@ -1,0 +1,215 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.1.0/schema.json",
+  "name": "track_table",
+  "position": {
+    "x": 856,
+    "y": 214,
+    "z": 0,
+    "height": 596,
+    "width": 552,
+    "tabOrder": 2996
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Track details · select a bar to inspect'"
+                }
+              }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#EEF2FF'"
+                    }
+                  }
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "12D"
+                }
+              }
+            },
+            "fontFamily": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Segoe UI Semibold'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "background": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#151E32'"
+                    }
+                  }
+                }
+              }
+            },
+            "transparency": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "border": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Listening Events"
+                    }
+                  },
+                  "Property": "Track Name"
+                }
+              },
+              "queryRef": "Listening Events.Track Name",
+              "nativeQueryRef": "Track Name"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Listening Events"
+                    }
+                  },
+                  "Property": "Album"
+                }
+              },
+              "queryRef": "Listening Events.Album",
+              "nativeQueryRef": "Album"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Listening Events"
+                    }
+                  },
+                  "Property": "Listening Events"
+                }
+              },
+              "queryRef": "Listening Events.Listening Events",
+              "nativeQueryRef": "Listening Events"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Listening Events"
+                    }
+                  },
+                  "Property": "Listening Hours"
+                }
+              },
+              "queryRef": "Listening Events.Listening Hours",
+              "nativeQueryRef": "Listening Hours"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Listening Events"
+                    }
+                  },
+                  "Property": "Skip Rate"
+                }
+              },
+              "queryRef": "Listening Events.Skip Rate",
+              "nativeQueryRef": "Skip Rate"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Listening Events"
+                    }
+                  },
+                  "Property": "Average Completion"
+                }
+              },
+              "queryRef": "Listening Events.Average Completion",
+              "nativeQueryRef": "Average Completion"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Listening Events"
+                  }
+                },
+                "Property": "Listening Hours"
+              }
+            },
+            "direction": "Descending"
+          }
+        ]
+      }
+    }
+  }
+}

@@ -40,6 +40,7 @@ class PostgresTests(unittest.TestCase):
         with psycopg.connect(cls.database_url) as connection:
             connection.execute((ROOT / "sql/schema.sql").read_text())
             connection.execute((ROOT / "sql/analytics_views.sql").read_text())
+            connection.execute((ROOT / "sql/powerbi_view.sql").read_text())
 
     @classmethod
     def drop_database(cls):
@@ -158,6 +159,56 @@ class PostgresTests(unittest.TestCase):
         # The reporting script must also execute successfully on the loaded data.
         with psycopg.connect(self.database_url) as connection:
             connection.execute((ROOT / "sql/data_quality_checks.sql").read_text())
+
+    def test_powerbi_view_and_private_export_preserve_dates_and_track_identity(self):
+        import csv
+        from src.export_powerbi import export_data
+
+        data = cleaner.clean_chunk(
+            raw_events(
+                event("dated"),
+                event(
+                    "undated",
+                    **{
+                        "Event Timestamp": None,
+                        "Device Type": "   ",
+                        "Album Name": "Other Album",
+                    },
+                ),
+                event("overlong", **{"Media Duration In Milliseconds": 30000}),
+            )
+        ).loc[:, loader.DATABASE_COLUMNS]
+        loader.load_into_postgres(data)
+        self.assertEqual(
+            self.query(
+                "SELECT COUNT(*), COUNT(DISTINCT track_key), SUM(listening_duration_ms), "
+                "COUNT(*) FILTER (WHERE has_listening_date) FROM analytics.powerbi_listening_events"
+            ),
+            [(3, 2, 150000, 2)],
+        )
+        self.assertEqual(
+            self.query(
+                "SELECT listening_date, month_label, month_sort, device_type "
+                "FROM analytics.powerbi_listening_events WHERE event_id = 'undated'"
+            ),
+            [(None, None, None, "Unknown Device")],
+        )
+        self.assertEqual(
+            self.query(
+                "SELECT month_label, month_sort FROM analytics.powerbi_listening_events WHERE event_id = 'dated'"
+            ),
+            [("2026-07", 202607)],
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "Listening Events.csv"
+            self.assertEqual(export_data(self.database_url, output), 3)
+            with output.open(encoding="utf-8-sig", newline="") as handle:
+                rows = list(csv.DictReader(handle))
+            self.assertEqual(len(rows), 3)
+            undated = next(row for row in rows if row["Event ID"] == "undated")
+            self.assertEqual(undated["Listening Date"], "")
+            self.assertEqual(undated["Device"], "Unknown Device")
+            self.assertFalse(output.with_suffix(".csv.tmp").exists())
 
     @unittest.skipUnless(
         os.getenv("MUSIC_SOURCE_CSV"),

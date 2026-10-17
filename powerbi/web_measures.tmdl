@@ -1,0 +1,67 @@
+createOrReplace
+
+	ref table 'Listening Events'
+
+		measure 'Listening Events' = COALESCE(COUNTROWS('Listening Events'), 0)
+			formatString: #,0
+			displayFolder: Listening metrics
+
+		measure 'Listening Hours' = DIVIDE(SUM('Listening Events'[Listening Duration ms]), 3600000)
+			formatString: #,0.0
+			displayFolder: Listening metrics
+
+		measure 'Listening Minutes' = DIVIDE(SUM('Listening Events'[Listening Duration ms]), 60000)
+			formatString: #,0.00
+			displayFolder: Listening metrics
+
+		measure 'Unique Tracks' = DISTINCTCOUNT('Listening Events'[Track Key])
+			formatString: #,0
+			displayFolder: Listening metrics
+
+		measure 'Skipped Events' = COALESCE(CALCULATE(COUNTROWS('Listening Events'), KEEPFILTERS('Listening Events'[Is Skipped] = TRUE())), 0)
+			formatString: #,0
+			displayFolder: Listening metrics
+
+		measure 'Skip Rate' = DIVIDE([Skipped Events], [Listening Events])
+			formatString: 0.0%
+			displayFolder: Listening metrics
+
+		measure 'Natural End Events' = COALESCE(CALCULATE(COUNTROWS('Listening Events'), KEEPFILTERS('Listening Events'[Is Natural End] = TRUE())), 0)
+			formatString: #,0
+			displayFolder: Listening metrics
+
+		measure 'Natural End Rate' = DIVIDE([Natural End Events], [Listening Events])
+			formatString: 0.0%
+			displayFolder: Listening metrics
+
+		measure 'Dated Events' = COALESCE(CALCULATE(COUNTROWS('Listening Events'), KEEPFILTERS('Listening Events'[Has Listening Date] = TRUE())), 0)
+			formatString: #,0
+			displayFolder: Listening metrics
+
+		measure 'Events Without Dates' = COALESCE(CALCULATE(COUNTROWS('Listening Events'), KEEPFILTERS('Listening Events'[Has Listening Date] = FALSE())), 0)
+			formatString: #,0
+			displayFolder: Listening metrics
+
+		measure 'Date Coverage' = DIVIDE([Dated Events], [Listening Events])
+			formatString: 0.0%
+			displayFolder: Listening metrics
+
+		measure 'Dated Listening Hours' = CALCULATE([Listening Hours], KEEPFILTERS('Listening Events'[Has Listening Date] = TRUE()))
+			formatString: #,0.0
+			displayFolder: Listening metrics
+
+		measure 'Dated Skip Rate' = CALCULATE([Skip Rate], KEEPFILTERS('Listening Events'[Has Listening Date] = TRUE()))
+			formatString: 0.0%
+			displayFolder: Listening metrics
+
+		measure 'Average Completion' = DIVIDE(AVERAGE('Listening Events'[Completion Percent]), 100)
+			formatString: 0.0%
+			displayFolder: Listening metrics
+
+		measure 'Track Rank' = RANKX(ALLSELECTED('Listening Events'[Track]), [Listening Hours], , DESC, DENSE)
+			formatString: #,0
+			displayFolder: Listening metrics
+
+		measure 'Top Track Hours' = IF([Track Rank] <= 15, [Listening Hours])
+			formatString: #,0.0
+			displayFolder: Listening metrics

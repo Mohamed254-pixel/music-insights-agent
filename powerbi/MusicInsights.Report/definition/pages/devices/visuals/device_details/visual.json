@@ -1,0 +1,201 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.1.0/schema.json",
+  "name": "device_details",
+  "position": {
+    "x": 32,
+    "y": 350,
+    "z": 0,
+    "height": 460,
+    "width": 760,
+    "tabOrder": 3532
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Device breakdown'"
+                }
+              }
+            },
+            "fontColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#EEF2FF'"
+                    }
+                  }
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "12D"
+                }
+              }
+            },
+            "fontFamily": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Segoe UI Semibold'"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "background": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "color": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "Literal": {
+                      "Value": "'#151E32'"
+                    }
+                  }
+                }
+              }
+            },
+            "transparency": {
+              "expr": {
+                "Literal": {
+                  "Value": "0D"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "border": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Listening Events"
+                    }
+                  },
+                  "Property": "Device"
+                }
+              },
+              "queryRef": "Listening Events.Device",
+              "nativeQueryRef": "Device"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Listening Events"
+                    }
+                  },
+                  "Property": "Listening Events"
+                }
+              },
+              "queryRef": "Listening Events.Listening Events",
+              "nativeQueryRef": "Listening Events"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Listening Events"
+                    }
+                  },
+                  "Property": "Listening Hours"
+                }
+              },
+              "queryRef": "Listening Events.Listening Hours",
+              "nativeQueryRef": "Listening Hours"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Listening Events"
+                    }
+                  },
+                  "Property": "Skip Rate"
+                }
+              },
+              "queryRef": "Listening Events.Skip Rate",
+              "nativeQueryRef": "Skip Rate"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Listening Events"
+                    }
+                  },
+                  "Property": "Natural End Rate"
+                }
+              },
+              "queryRef": "Listening Events.Natural End Rate",
+              "nativeQueryRef": "Natural End Rate"
+            }
+          ]
+        }
+      },
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "Listening Events"
+                  }
+                },
+                "Property": "Listening Hours"
+              }
+            },
+            "direction": "Descending"
+          }
+        ]
+      }
+    }
+  }
+}

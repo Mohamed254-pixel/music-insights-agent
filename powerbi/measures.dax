@@ -1,0 +1,66 @@
+// Create these measures on the 'Listening Events' table in the web model.
+// Each block is a separate measure; percentage measures use percentage formatting.
+
+// Format: #,0
+Listening Events =
+COALESCE(COUNTROWS('Listening Events'), 0)
+
+// Format: #,0.0
+Listening Hours =
+DIVIDE(SUM('Listening Events'[Listening Duration ms]), 3600000)
+
+// Format: #,0.00
+Listening Minutes =
+DIVIDE(SUM('Listening Events'[Listening Duration ms]), 60000)
+
+// Format: #,0
+Unique Tracks =
+DISTINCTCOUNT('Listening Events'[Track Key])
+
+// Format: #,0
+Skipped Events =
+COALESCE(CALCULATE(COUNTROWS('Listening Events'), KEEPFILTERS('Listening Events'[Is Skipped] = TRUE())), 0)
+
+// Format: 0.0%
+Skip Rate =
+DIVIDE([Skipped Events], [Listening Events])
+
+// Format: #,0
+Natural End Events =
+COALESCE(CALCULATE(COUNTROWS('Listening Events'), KEEPFILTERS('Listening Events'[Is Natural End] = TRUE())), 0)
+
+// Format: 0.0%
+Natural End Rate =
+DIVIDE([Natural End Events], [Listening Events])
+
+// Format: #,0
+Dated Events =
+COALESCE(CALCULATE(COUNTROWS('Listening Events'), KEEPFILTERS('Listening Events'[Has Listening Date] = TRUE())), 0)
+
+// Format: #,0
+Events Without Dates =
+COALESCE(CALCULATE(COUNTROWS('Listening Events'), KEEPFILTERS('Listening Events'[Has Listening Date] = FALSE())), 0)
+
+// Format: 0.0%
+Date Coverage =
+DIVIDE([Dated Events], [Listening Events])
+
+// Format: #,0.0
+Dated Listening Hours =
+CALCULATE([Listening Hours], KEEPFILTERS('Listening Events'[Has Listening Date] = TRUE()))
+
+// Format: 0.0%
+Dated Skip Rate =
+CALCULATE([Skip Rate], KEEPFILTERS('Listening Events'[Has Listening Date] = TRUE()))
+
+// Format: 0.0%
+Average Completion =
+DIVIDE(AVERAGE('Listening Events'[Completion Percent]), 100)
+
+// Format: #,0
+Track Rank =
+RANKX(ALLSELECTED('Listening Events'[Track]), [Listening Hours], , DESC, DENSE)
+
+// Format: #,0.0
+Top Track Hours =
+IF([Track Rank] <= 15, [Listening Hours])

@@ -1,0 +1,252 @@
+{
+  "name": "MusicInsights",
+  "compatibilityLevel": 1600,
+  "model": {
+    "culture": "en-US",
+    "defaultPowerBIDataSourceVersion": "powerBI_V3",
+    "dataAccessOptions": {
+      "legacyRedirects": true,
+      "returnErrorValuesAsNull": true
+    },
+    "expressions": [
+      {
+        "name": "PostgreSQL Server",
+        "kind": "m",
+        "expression": "\"localhost:5432\" meta [IsParameterQuery=true, Type=\"Text\", IsParameterQueryRequired=true]"
+      },
+      {
+        "name": "PostgreSQL Database",
+        "kind": "m",
+        "expression": "\"music_insights\" meta [IsParameterQuery=true, Type=\"Text\", IsParameterQueryRequired=true]"
+      }
+    ],
+    "tables": [
+      {
+        "name": "Listening Events",
+        "columns": [
+          {
+            "name": "Event ID",
+            "sourceColumn": "event_id",
+            "dataType": "string",
+            "summarizeBy": "none",
+            "isHidden": true
+          },
+          {
+            "name": "Listening Date",
+            "sourceColumn": "listening_date",
+            "dataType": "dateTime",
+            "summarizeBy": "none",
+            "formatString": "yyyy-MM-dd"
+          },
+          {
+            "name": "Listening Month",
+            "sourceColumn": "listening_month",
+            "dataType": "dateTime",
+            "summarizeBy": "none",
+            "formatString": "yyyy-MM-dd"
+          },
+          {
+            "name": "Month",
+            "sourceColumn": "month_label",
+            "dataType": "string",
+            "summarizeBy": "none",
+            "sortByColumn": "Month Sort"
+          },
+          {
+            "name": "Month Sort",
+            "sourceColumn": "month_sort",
+            "dataType": "int64",
+            "summarizeBy": "none",
+            "isHidden": true
+          },
+          {
+            "name": "Track Name",
+            "sourceColumn": "song_name",
+            "dataType": "string",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Album",
+            "sourceColumn": "album_name",
+            "dataType": "string",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Track",
+            "sourceColumn": "track_label",
+            "dataType": "string",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Track Key",
+            "sourceColumn": "track_key",
+            "dataType": "string",
+            "summarizeBy": "none",
+            "isHidden": true
+          },
+          {
+            "name": "Device",
+            "sourceColumn": "device_type",
+            "dataType": "string",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "Listening Duration ms",
+            "sourceColumn": "listening_duration_ms",
+            "dataType": "int64",
+            "summarizeBy": "none",
+            "isHidden": true
+          },
+          {
+            "name": "Is Skipped",
+            "sourceColumn": "is_skipped",
+            "dataType": "boolean",
+            "summarizeBy": "none",
+            "isHidden": true
+          },
+          {
+            "name": "Is Natural End",
+            "sourceColumn": "is_natural_end",
+            "dataType": "boolean",
+            "summarizeBy": "none",
+            "isHidden": true
+          },
+          {
+            "name": "Completion Percent",
+            "sourceColumn": "completion_percent",
+            "dataType": "double",
+            "summarizeBy": "none",
+            "isHidden": true
+          },
+          {
+            "name": "Has Listening Date",
+            "sourceColumn": "has_listening_date",
+            "dataType": "boolean",
+            "summarizeBy": "none",
+            "isHidden": true
+          }
+        ],
+        "measures": [
+          {
+            "name": "Listening Events",
+            "expression": "COALESCE(COUNTROWS('Listening Events'), 0)",
+            "formatString": "#,0",
+            "displayFolder": "Listening metrics"
+          },
+          {
+            "name": "Listening Hours",
+            "expression": "DIVIDE(SUM('Listening Events'[Listening Duration ms]), 3600000)",
+            "formatString": "#,0.0",
+            "displayFolder": "Listening metrics"
+          },
+          {
+            "name": "Listening Minutes",
+            "expression": "DIVIDE(SUM('Listening Events'[Listening Duration ms]), 60000)",
+            "formatString": "#,0.00",
+            "displayFolder": "Listening metrics"
+          },
+          {
+            "name": "Unique Tracks",
+            "expression": "DISTINCTCOUNT('Listening Events'[Track Key])",
+            "formatString": "#,0",
+            "displayFolder": "Listening metrics"
+          },
+          {
+            "name": "Skipped Events",
+            "expression": "COALESCE(CALCULATE(COUNTROWS('Listening Events'), KEEPFILTERS('Listening Events'[Is Skipped] = TRUE())), 0)",
+            "formatString": "#,0",
+            "displayFolder": "Listening metrics"
+          },
+          {
+            "name": "Skip Rate",
+            "expression": "DIVIDE([Skipped Events], [Listening Events])",
+            "formatString": "0.0%",
+            "displayFolder": "Listening metrics"
+          },
+          {
+            "name": "Natural End Events",
+            "expression": "COALESCE(CALCULATE(COUNTROWS('Listening Events'), KEEPFILTERS('Listening Events'[Is Natural End] = TRUE())), 0)",
+            "formatString": "#,0",
+            "displayFolder": "Listening metrics"
+          },
+          {
+            "name": "Natural End Rate",
+            "expression": "DIVIDE([Natural End Events], [Listening Events])",
+            "formatString": "0.0%",
+            "displayFolder": "Listening metrics"
+          },
+          {
+            "name": "Dated Events",
+            "expression": "COALESCE(CALCULATE(COUNTROWS('Listening Events'), KEEPFILTERS('Listening Events'[Has Listening Date] = TRUE())), 0)",
+            "formatString": "#,0",
+            "displayFolder": "Listening metrics"
+          },
+          {
+            "name": "Events Without Dates",
+            "expression": "COALESCE(CALCULATE(COUNTROWS('Listening Events'), KEEPFILTERS('Listening Events'[Has Listening Date] = FALSE())), 0)",
+            "formatString": "#,0",
+            "displayFolder": "Listening metrics"
+          },
+          {
+            "name": "Date Coverage",
+            "expression": "DIVIDE([Dated Events], [Listening Events])",
+            "formatString": "0.0%",
+            "displayFolder": "Listening metrics"
+          },
+          {
+            "name": "Dated Listening Hours",
+            "expression": "CALCULATE([Listening Hours], KEEPFILTERS('Listening Events'[Has Listening Date] = TRUE()))",
+            "formatString": "#,0.0",
+            "displayFolder": "Listening metrics"
+          },
+          {
+            "name": "Dated Skip Rate",
+            "expression": "CALCULATE([Skip Rate], KEEPFILTERS('Listening Events'[Has Listening Date] = TRUE()))",
+            "formatString": "0.0%",
+            "displayFolder": "Listening metrics"
+          },
+          {
+            "name": "Average Completion",
+            "expression": "DIVIDE(AVERAGE('Listening Events'[Completion Percent]), 100)",
+            "formatString": "0.0%",
+            "displayFolder": "Listening metrics"
+          },
+          {
+            "name": "Track Rank",
+            "expression": "RANKX(ALLSELECTED('Listening Events'[Track]), [Listening Hours], , DESC, DENSE)",
+            "formatString": "#,0",
+            "displayFolder": "Listening metrics"
+          },
+          {
+            "name": "Top Track Hours",
+            "expression": "IF([Track Rank] <= 15, [Listening Hours])",
+            "formatString": "#,0.0",
+            "displayFolder": "Listening metrics"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "Listening Events",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = PostgreSQL.Database(#\"PostgreSQL Server\", #\"PostgreSQL Database\", [CreateNavigationProperties=false]),",
+                "    Events = Source{[Schema=\"analytics\",Item=\"powerbi_listening_events\"]}[Data]",
+                "in",
+                "    Events"
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "annotations": [
+      {
+        "name": "PBI_QueryOrder",
+        "value": "[\"PostgreSQL Server\", \"PostgreSQL Database\", \"Listening Events\"]"
+      }
+    ]
+  }
+}
