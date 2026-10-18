@@ -4,12 +4,15 @@ The native project contains three report pages, 32 visuals, 16 DAX measures,
 and a PostgreSQL import model. The native metadata has been schema-checked; the Desktop project has not yet
 been opened, refreshed, or visually verified in Power BI Desktop. A separate
 private web semantic model has been imported, its 16 measures applied, and the
-summary results checked against SQL. Online report authoring is unfinished.
+summary results checked against SQL. The separate web report now has three
+saved pages and 29 visuals. Its date/device slicers sync across all pages and
+passed combined-filter checks.
 
-The private web report has an initial save containing four overview cards.
-Further overview and track-explorer edits may remain unsaved in the open browser;
-the online device/coverage page and final layout/filter checks are still pending.
-The local three-page definitions are separate from that online draft.
+The web report was reloaded to verify that the pages, charts, tables, and
+headings persisted. Screenshot review passed for all three pages on October 17 after browser
+capture became available again. Wide tables use horizontal scrolling. The local three-page definitions
+remain a separate 32-visual Desktop project, not an export of the web report.
+See [verification.md](verification.md) for the saved report link and checks.
 
 ## Pages
 
@@ -156,4 +159,5 @@ after editing it; changes made directly in generated files can be overwritten.
 The validator checks visual field bindings, page bounds, model references, and
 Microsoft's public schemas. It does not execute DAX or Power Query, or render
 visuals. PostgreSQL integration tests separately verify the view and CSV export.
-Final acceptance still requires checking the completed report inside Power BI.
+The web report acceptance checks are recorded in `verification.md`. The separate
+Desktop project still requires a Windows refresh and visual check.

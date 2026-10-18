@@ -2,7 +2,7 @@
 
 An end-to-end music analytics system that transforms private Apple Music listening history into cleaned data, a PostgreSQL analytics database, and verified SQL insights.
 
-The current version includes the Python ETL pipeline, Dockerized PostgreSQL database, duplicate-safe loader, data-quality checks, and analytics views. A three-page native Power BI report project and private web-import snapshot exporter are prepared; The browser semantic model has been imported and its measures checked against SQL; the online report layout and visual verification remain in progress. The read-only AI agent is the next stage.
+The current version includes the Python ETL pipeline, Dockerized PostgreSQL database, duplicate-safe loader, data-quality checks, and analytics views. A three-page native Power BI report project and private web-import snapshot exporter are prepared; The browser semantic model has been imported and its measures checked against SQL; the three-page online report is saved and its device/date filters have been checked against SQL. The web report has passed screenshot review; the separate Desktop project still needs a Windows refresh check. The read-only AI agent is the next stage.
 
 ## Project Goal
 
@@ -295,7 +295,8 @@ The agent can explain what changed in the data. It cannot claim to know why some
 - [x] ETL run auditing
 - [x] SQL data-quality checks
 - [x] Reusable analytics views
-- [ ] Power BI dashboard — native project prepared, web model verified; online report layout and visual verification pending
+- [x] Power BI web dashboard — three pages saved, SQL/filter checks and screenshot review passed
+- [ ] Native Power BI Desktop project refresh verification (Windows)
 - [ ] Read-only AI analytics agent
 - [x] Automated unit and PostgreSQL integration tests
 
