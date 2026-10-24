@@ -2,7 +2,16 @@
 
 An end-to-end music analytics system that transforms private Apple Music listening history into cleaned data, a PostgreSQL analytics database, and verified SQL insights.
 
-The current version includes the Python ETL pipeline, Dockerized PostgreSQL database, duplicate-safe loader, data-quality checks, and analytics views. A three-page native Power BI report project and private web-import snapshot exporter are prepared; The browser semantic model has been imported and its measures checked against SQL; the three-page online report is saved and its device/date filters have been checked against SQL. The web report has passed screenshot review; the separate Desktop project still needs a Windows refresh check. The read-only AI agent is the next stage.
+The data layer includes the Python ETL pipeline, Dockerized PostgreSQL,
+a duplicate-safe loader, data-quality checks, and analytics views.
+
+The three-page Power BI web report is saved and has passed SQL, filter, and
+screenshot checks. A separate native Desktop project is prepared; its Windows
+refresh check remains pending.
+
+Milestone 5 adds a terminal agent with approved read-only SQL tools, a restricted
+database login, and tested local evidence rendering. Live LLM routing still
+requires an API key/model and its evaluation run.
 
 ## Project Goal
 
@@ -16,7 +25,7 @@ The completed data layer can answer questions such as:
 - Which devices account for most of my listening?
 - How do repeat and shuffle settings affect listening behavior?
 
-The planned AI agent will answer these questions using verified results from approved SQL views.
+The terminal agent supports top tracks, monthly listening, device usage, and skip rates through approved parameterized tools. Other questions require additional tools and evaluation.
 
 ## Architecture
 
@@ -26,8 +35,8 @@ flowchart TD
     B --> C["Cleaned Parquet Data"]
     C --> D["PostgreSQL in Docker"]
     D --> E["SQL Analytics Views"]
-    E --> F["Power BI Dashboard (Planned)"]
-    E --> G["Read-Only AI Agent (Planned)"]
+    E --> F["Power BI Web Dashboard"]
+    E --> G["Read-Only Terminal Agent"]
     G --> H["Natural-Language Insights"]
 ```
 
@@ -271,18 +280,30 @@ The `analytics` schema currently contains:
 - `track_summary`: track-level listening and skip metrics
 - `device_summary`: device-level listening and skip metrics
 
-## Planned AI Safety Design
+## Milestone 5: Read-Only Terminal Agent
 
-The planned AI agent will use these controls:
+The terminal agent uses an LLM to select one approved tool and its filters.
+It never accepts model-generated SQL. The four analytics tools cover top tracks,
+monthly listening, device usage, and count-weighted skip rates. The model receives
+only the question and static tool descriptions; database results stay local.
+A deterministic answer includes numerical evidence, interpreted filters, and
+missing-date limitations. No web interface has been built.
 
-- Read-only PostgreSQL access
-- Approved query tools
-- Parameterized SQL templates
-- Predefined analytics views
-- Numerical evidence before explanations
-- No unsupported claims about personal motivations
+A dedicated PostgreSQL login has SELECT on a separate restricted reporting view,
+with no base-table grants. Runtime verifies privileges, uses read-only snapshots,
+binds parameters, and enforces query timeouts and result limits. Existing ETL
+and Power BI project definitions are unchanged.
 
-The agent can explain what changed in the data. It cannot claim to know why something changed outside the dataset.
+```bash
+# Configure AGENT_DATABASE_URL, OPENAI_API_KEY, and OPENAI_MODEL locally first.
+python -m src.agent.cli
+```
+
+The SQL tools, permissions, API adapter simulations, and recorded-plan evaluations
+passed testing. **Live LLM routing is not yet verified** because no API key/model
+is configured. See [setup, security boundaries, evaluation commands, and verified
+results](docs/milestone-5-agent.md). The agent cannot establish personal motives
+or infer dates for undated playback events.
 
 ## Project Status
 
@@ -297,7 +318,8 @@ The agent can explain what changed in the data. It cannot claim to know why some
 - [x] Reusable analytics views
 - [x] Power BI web dashboard — three pages saved, SQL/filter checks and screenshot review passed
 - [ ] Native Power BI Desktop project refresh verification (Windows)
-- [ ] Read-only AI analytics agent
+- [x] Read-only terminal analytics tools, restricted login, and local evidence answers
+- [ ] Live LLM routing evaluation (requires local API key/model)
 - [x] Automated unit and PostgreSQL integration tests
 
 ## Power BI Report
@@ -319,8 +341,8 @@ python -m unittest discover -s tests -t . -v
 
 PostgreSQL tests are skipped unless `TEST_DATABASE_URL` is set. They create a
 uniquely named temporary database and delete it after the suite, so the supplied
-account needs `CREATEDB` permission. Existing databases and listening data are not
-modified. To run against a disposable PostgreSQL 17 container:
+account needs `CREATEDB` and `CREATEROLE` permission for agent tests. Existing
+databases and listening data are not modified. To run against a disposable PostgreSQL 17 container:
 
 ```bash
 docker run --detach --rm --name music-insights-tests \
@@ -347,6 +369,8 @@ Coverage includes:
 - Scrub/skip classification and missing end reasons
 - Unchanged reruns, changed-row updates, audit counts, and transaction rollback
 - Analytics filtering, duration caps, and monthly/track/device aggregates
+- Agent contract validation, restricted-role access, denied writes, injection-safe
+  filter binding, local evidence/coverage reporting, and known-answer evaluations
 
 Rows with missing end reasons remain available for auditing, with
 `is_natural_end` and `is_listening_event` set to false.
