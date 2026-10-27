@@ -10,8 +10,10 @@ screenshot checks. A separate native Desktop project is prepared; its Windows
 refresh check remains pending.
 
 Milestone 5 adds a terminal agent with approved read-only SQL tools, a restricted
-database login, and tested local evidence rendering. Live LLM routing still
-requires an API key/model and its evaluation run.
+database login, and tested local evidence rendering. The expanded 24-case live
+evaluation passed twice (48/48 checks) on October 26, 2026. Eight real-data
+questions and an end-to-end terminal command passed independent SQL checks on
+October 24, 2026.
 
 ## Project Goal
 
@@ -300,8 +302,11 @@ python -m src.agent.cli
 ```
 
 The SQL tools, permissions, API adapter simulations, and recorded-plan evaluations
-passed testing. **Live LLM routing is not yet verified** because no API key/model
-is configured. See [setup, security boundaries, evaluation commands, and verified
+passed testing. **The 24-case live suite passed twice: 48/48 checks on October 26,
+2026.** It covers supported questions, ambiguous dates, unsupported requests,
+SQL/credential bypass attempts, and excessive limits. Eight real-data questions
+and the terminal command also passed independent SQL verification on October 24.
+These checks do not guarantee arbitrary-question accuracy. See [setup, security boundaries, evaluation commands, and verified
 results](docs/milestone-5-agent.md). The agent cannot establish personal motives
 or infer dates for undated playback events.
 
@@ -319,7 +324,8 @@ or infer dates for undated playback events.
 - [x] Power BI web dashboard — three pages saved, SQL/filter checks and screenshot review passed
 - [ ] Native Power BI Desktop project refresh verification (Windows)
 - [x] Read-only terminal analytics tools, restricted login, and local evidence answers
-- [ ] Live LLM routing evaluation (requires local API key/model)
+- [x] Live LLM routing evaluation — 24 cases × 2 runs, 48/48 passed (October 26, 2026)
+- [x] Real-data Q&A — 8/8 questions and an end-to-end terminal check passed (October 24, 2026)
 - [x] Automated unit and PostgreSQL integration tests
 
 ## Power BI Report
